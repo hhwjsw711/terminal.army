@@ -157,6 +157,8 @@ LANG_LABELS = {
     "es": "Español",
     "tr": "Türkçe",
     "ru": "Русский",
+    "zh-cn": "简体中文",
+    "zh-tw": "繁體中文",
 }
 
 
