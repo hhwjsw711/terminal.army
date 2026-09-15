@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="{{ t.html_lang }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>{{ t.title }}</title>
+
+<link rel="canonical" href="https://{{ server_name }}/">
+<meta name="description" content="{{ t.meta_description }}">
+<meta property="og:url" content="https://{{ server_name }}/">
+<meta property="og:title" content="{{ t.og_title }}">
+<meta property="og:description" content="{{ t.meta_description }}">
+
+
+<meta name="theme-color" content="#08090b">
+<meta name="color-scheme" content="dark">
+
+
+<link rel="icon" href="/static/icon.svg" type="image/svg+xml">
+<link rel="icon" href="/static/favicon-light.svg" type="image/svg+xml" media="(prefers-color-scheme: light)">
+<link rel="icon" href="/static/favicon-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="mask-icon" href="/static/brand-symbol.svg" color="#22D3EE">
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+
+<link rel="manifest" href="/site.webmanifest">
+
+
+<meta property="og:site_name" content="terminal.army">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="{{ t.og_locale }}">
+<meta property="og:image" content="/static/og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{{ t.og_image_alt }}">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="stylesheet" href="/static/design-tokens.css">
+<link rel="stylesheet" href="/static/main.css">
+
+
+</head>
+<body>
+<div class="landing-shell">
+
+
+
+<section class="hero">
+  
+  <div class="sky" aria-hidden="true">
+    <div class="sky-stars"></div>
+    <div class="sky-planet"></div>
+    <canvas class="sky-globe" id="sky-canvas"></canvas>
+    
+    <div class="hero-blackhole-still" aria-hidden="true"></div>
+    <canvas id="blackhole-canvas" class="hero-blackhole" aria-hidden="true"></canvas>
+    <div class="sky-scrim"></div>
+  </div>
+
+  
+  
+  <div class="strip">
+    
+    <div class="strip-counts">
+      <span class="strip-item">{{ commanders_count }}</span>
+      <span class="strip-item strip-live"><span class="live-dot"></span>{{ online_count }}</span>
+    </div>
+    
+    <nav class="strip-community" aria-label="{{ t.community_aria }}">
+      <span class="strip-community-label">{{ t.community_label }}</span>
+      
+  <a href="https://www.reddit.com/r/terminalarmy/" target="_blank" rel="noopener noreferrer">Reddit ↗</a>
+  <a href="https://discord.gg/aTYXTZ7NWj" target="_blank" rel="noopener noreferrer">Discord ↗</a>
+  <a href="https://chat.whatsapp.com/KB3XvnE5xRvH5hJ8byNp3z?mode=gi_t" target="_blank" rel="noopener noreferrer">WhatsApp ↗</a>
+  <a href="https://x.com/terminalarmy" target="_blank" rel="me noopener noreferrer">X (Twitter) ↗</a>
+  <a href="https://www.instagram.com/terminal.army" target="_blank" rel="me noopener noreferrer">Instagram ↗</a>
+
+    </nav>
+  </div>
+
+  <header class="nav">
+    <a class="nav-brand" href="/"><span class="brand-symbol" aria-hidden="true"></span>TERMINAL<span class="dot">.</span>ARMY</a>
+    <div class="nav-auth">
+      
+        <a class="btn btn-quiet" href="/login">{{ t.nav_login }}</a>
+        <a class="btn btn-loud" href="/signup">{{ t.nav_signup }}</a>
+      
+    </div>
+  </header>
+
+
+  
+  
+  <aside class="hero-board" aria-label="{{ t.board_aria }}">
+    <h2>{{ t.board_title }}</h2>
+    <ol>
+      
+      {% for r in rankings %}
+      <li>
+        <span class="rank">{{ r.rank }}</span>
+        <span class="who">{{ r.username }} {% if r.alliance_tag %}<em>{{ r.alliance_tag }}</em>{% endif %}</span>
+        <span class="score">{{ fmt_int(r.total_points) }}</span>
+      </li>
+      {% endfor %}
+      
+    </ol>
+    
+    <a class="board-more" href="/leaderboard">{{ t.board_more }}</a>
+  </aside>
+  
+
+  <div class="scene-toggle" id="scene-toggle" hidden></div>
+
+  <div class="hero-body wrap">
+    
+    <h1 class="hero-title">{{ t.hero_title_1 }} <br>{{ t.hero_title_2 }}</h1>
+    <p class="hero-lede">{{ t.hero_lede }}</p>
+
+    
+    <p class="hero-cmd" data-copy data-copy-label="{{ t.copy_label }}" data-copy-done="{{ t.copy_done }}"><span class="cmd-text"><span class="sigil" aria-hidden="true">$</span><code>curl -fsSL https://{{ server_name }}/install.sh | sh</code></span></p>
+
+    
+    <div class="demo" id="demo" hidden></div>
+
+  </div>
+</section>
+
+
+<section class="band-mcp">
+  <div class="wrap mcp-inner">
+    <div class="mcp-pitch">
+      <h2 class="mcp-title">{{ t.mcp_title }}</h2>
+      <p class="mcp-lede">{{ t.mcp_lede }}</p>
+      <p class="hero-cmd mcp-cmd" data-copy data-copy-label="{{ t.copy_label }}" data-copy-done="{{ t.copy_done }}"><span class="cmd-text"><span class="sigil" aria-hidden="true">$</span><code>tarmy commander</code></span></p>
+      <p><a class="mcp-more" href="https://docs.terminal.army/commander/">{{ t.mcp_more }} &rarr;</a></p>
+    </div>
+
+    <div class="mcp-talk" aria-label="{{ t.mcp_title }}">
+      <p class="mcp-ask"><span class="sigil" aria-hidden="true">&gt;</span> {{ t.mcp_ask }}</p>
+      <p class="mcp-reply">{{ t.mcp_reply }}</p>
+    </div>
+  </div>
+</section>
+
+<footer class="site-foot">
+  <div class="wrap site-foot-inner">
+    <div class="foot-brand">
+      <span class="foot-mark"><span class="brand-symbol brand-symbol-sm" aria-hidden="true"></span>TERMINAL<span class="dot">.</span>ARMY</span>
+      <p>{{ t.foot_desc }}</p>
+    </div>
+
+    <nav class="foot-cols" aria-label="{{ t.footer_aria }}">
+      <div>
+        <h2>{{ t.col_play }}</h2>
+        <a href="/signup">{{ t.link_signup }}</a>
+        <a href="/login">{{ t.link_login }}</a>
+        <a href="/leaderboard">{{ t.link_ranking }}</a>
+        <a href="https://docs.terminal.army/install/">{{ t.link_install_client }}</a>
+        <a href="https://docs.terminal.army/commander/">{{ t.link_commander }}</a>
+      </div>
+      <div>
+        <h2>{{ t.col_learn }}</h2>
+        <a href="https://docs.terminal.army/">{{ t.link_docs }}</a>
+        <a href="https://docs.terminal.army/commands/">{{ t.link_commands }}</a>
+        <a href="https://docs.terminal.army/mechanics/">{{ t.link_mechanics }}</a>
+        <a href="/about">{{ t.link_about }}</a>
+        <a href="/faq">{{ t.link_faq }}</a>
+        <a href="/changelog">{{ t.link_changelog }}</a>
+      </div>
+      
+      <div>
+        <h2>{{ t.col_service }}</h2>
+        <a href="https://status.terminal.army/">{{ t.link_status }}</a>
+        <a href="/terms">{{ t.link_terms }}</a>
+        <a href="/privacy">{{ t.link_privacy }}</a>
+        <a href="/cookies">{{ t.link_cookies }}</a>
+      </div>
+      <div>
+        <h2>{{ t.col_community }}</h2>
+        
+  <a href="https://www.reddit.com/r/terminalarmy/" target="_blank" rel="noopener noreferrer">Reddit ↗</a>
+  <a href="https://discord.gg/aTYXTZ7NWj" target="_blank" rel="noopener noreferrer">Discord ↗</a>
+  <a href="https://chat.whatsapp.com/KB3XvnE5xRvH5hJ8byNp3z?mode=gi_t" target="_blank" rel="noopener noreferrer">WhatsApp ↗</a>
+  <a href="https://x.com/terminalarmy" target="_blank" rel="me noopener noreferrer">X (Twitter) ↗</a>
+  <a href="https://www.instagram.com/terminal.army" target="_blank" rel="me noopener noreferrer">Instagram ↗</a>
+
+      </div>
+    </nav>
+  </div>
+
+  <div class="wrap site-foot-base">
+    
+    <p>{{ t.formula_note }} <a href="https://ogame.fandom.com/wiki/OGame_Wiki">OGame Fandom Wiki</a>.</p>
+    <nav class="lang-picker" aria-label="{{ t.lang_aria }}">
+  {% for code, label in lang_items %}
+  <a href="/?lang={{ code }}" hreflang="{{ code }}" {% if code == lang %}class="on" aria-current="true"{% endif %}>{{ label }}</a>
+  {% endfor %}
+</nav>
+  </div>
+</footer>
+
+<link rel="stylesheet" href="/static/vendor/asciinema-player.css">
+<script src="/static/vendor/asciinema-player.min.js"></script>
+<script type="module" src="/static/hero.js"></script>
+<script type="module" src="/static/demo.js"></script>
+<script type="module" src="/static/copy.js"></script>
+<script type="module" src="/static/scene.js"></script>
+
+<footer class="site-version">
+
+  terminal.army <b>v{{ version }}</b> &middot; {{ t.last_updated }} {{ last_updated }}
+  <span class="version-note">{{ t.version_note }}</span>
+  
+  <nav class="legal-links" aria-label="{{ t.legal_aria }}">
+  <a href="/about">{{ t.link_about }}</a>
+  <a href="/faq">{{ t.link_faq }}</a>
+  <a href="/changelog">{{ t.link_changelog }}</a>
+  <a href="/privacy">{{ t.link_privacy }}</a>
+  <a href="/terms">{{ t.link_terms }}</a>
+  <a href="/cookies">{{ t.link_cookies }}</a>
+</nav>
+  
+  <nav class="lang-picker" aria-label="{{ t.lang_aria }}">
+  {% for code, label in lang_items %}
+  <a href="/?lang={{ code }}" hreflang="{{ code }}" {% if code == lang %}class="on" aria-current="true"{% endif %}>{{ label }}</a>
+  {% endfor %}
+</nav>
+
+</footer>
+</div>
+</body>
+</html>

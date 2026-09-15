@@ -17,6 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.app.api.device import bind_token_to_code
 from backend.app.config import get_settings
 from backend.app.deps import DBSession
+from backend.app.i18n import SUPPORTED_LANGS, DEFAULT_LANG, get_translations, format_count
 from backend.app.game.constants import (
     BUILDING_LABELS,
     DEFENSE_LABELS,
@@ -150,16 +151,64 @@ async def _landing_rankings(db: AsyncSession, limit: int = 20) -> list[dict]:
 # ============================================================================
 # Routes: root / login / signup / signin / logout / install
 # ============================================================================
+LANG_LABELS = {
+    "en": "English",
+    "de": "Deutsch",
+    "es": "Español",
+    "tr": "Türkçe",
+    "ru": "Русский",
+}
+
+
 @router.get("/", response_class=HTMLResponse)
 async def root(
     request: Request,
     db: DBSession,
+    lang: str | None = None,
     tarmy_token: Annotated[str | None, Cookie(alias=COOKIE_NAME)] = None,
 ) -> Response:
     user = await _user_from_cookie(tarmy_token, db)
     if user is not None:
         return RedirectResponse("/dashboard", status_code=302)
-    return await install_page(request, db)
+    return await landing_page(request, db, lang)
+
+
+async def landing_page(
+    request: Request,
+    db: DBSession,
+    lang: str | None = None,
+) -> Response:
+    # Resolve language: explicit param > cookie > default
+    if lang is None:
+        lang = request.cookies.get("tarmy_lang", DEFAULT_LANG)
+    if lang not in SUPPORTED_LANGS:
+        lang = DEFAULT_LANG
+
+    rankings = await _landing_rankings(db, limit=5)
+    t = get_translations(lang)
+    total_players = await _registered_count(db)
+    online = online_count()
+
+    settings = get_settings()
+
+    import datetime
+
+    return templates.TemplateResponse(
+        name="landing.html",
+        request=request,
+        context={
+            "request": request,
+            "t": t,
+            "lang": lang,
+            "lang_items": [(code, LANG_LABELS[code]) for code in SUPPORTED_LANGS],
+            "rankings": rankings,
+            "commanders_count": format_count(t["commanders_count"], total_players),
+            "online_count": format_count(t["online_now"], online),
+            "server_name": settings.server_name or "terminal.army",
+            "version": "0.15.6",
+            "last_updated": "2026-09-14 12:43 UTC",
+        },
+    )
 
 
 @router.get("/install", response_class=HTMLResponse)
