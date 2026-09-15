@@ -193,8 +193,6 @@ async def landing_page(
 
     settings = get_settings()
 
-    import datetime
-
     return templates.TemplateResponse(
         name="landing.html",
         request=request,
